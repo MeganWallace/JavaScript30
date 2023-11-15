@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS + CSS Clock</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+
+
+    <div class="clock">
+      <div class="clock-face">
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+      </div>
+    </div>
+
+
+  <style>
+    html {
+      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background-size: cover;
+      font-family: 'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px); /* account for the height of the clock hands */
+    }
+
+    .hand {
+      width: 50%;
+      height: 6px;
+      background: black;
+      position: absolute;
+      top: 50%;
+      transform-origin: 100%; /* moves rotation point from center of hand to right side*/
+      transform: rotate(90deg); /* rotates hands to 12:00 point */
+      transition: all 0.05s; /* sets duration of rotation */
+      transition-timing-function: cubic-bezier(1, 2.11, 0.86, 1.09); /* sets rotation speed pattern...makes hand "bounce" at end of rotation */
+    }
+
+    .min-hand {
+      left: 10%; /* offsets min-hand by 10% to the right to compensate for length adjustment */
+      width: 40%; /* shortens min-hand by 10% */
+    }
+
+    .hour-hand {
+      left: 20%; /* offsets hour-hand by 20% to the right to compensate for length adjustment */
+      width: 30%; /* shortens hour-hand by 20% */
+    }
+  </style>
+
+  <script>
+    // global variable for second hand
+    const secondHand = document.querySelector(".second-hand");
+    // global variable for minute hand
+    const minHand = document.querySelector(".min-hand");
+    // global variable for hour hand
+    const hourHand = document.querySelector(".hour-hand");
+
+    // function to retrieve current time in hours, minutes, seconds:
+    function setDate(){  // setDate is a global function
+      const now = new Date(); // fetches a date object for the current date/time
+        // *calling Date() without "new" will return a string version of the date rather than an object
+      console.log(now);
+
+      const seconds = now.getSeconds(); // fetches current time in seconds
+      const secondsDegrees = ((360/60)*seconds)+ 90; // converts current second into hand position in degrees
+        // 90 needs to be added at end to account for 90deg rotation applied in CSS used to make hands vertical 
+      secondHand.style.transform = `rotate(${secondsDegrees}deg)`; // rotates hand by value of secondsDegrees
+
+      const mins = now.getMinutes(); // fetches current time in minutes
+      const minsDegrees = ((360/60)*mins)+ 90; // converts current minute into hand position in degrees
+      minHand.style.transform = `rotate(${minsDegrees}deg)`; // rotates hand by value of minsDegrees
+
+      const hours = now.getHours(); // fetches current time in hours
+      const hoursDegrees = ((360/12)*hours)+ 90; // converts current hour into hand position in degrees
+      hourHand.style.transform = `rotate(${hoursDegrees}deg)`; // rotates hand by value of hoursDegrees
+    }
+    
+    setInterval(setDate, 1000); // current time in milliseconds (1000ms=1s)
+
+
+  </script>
+</body>
+</html>
