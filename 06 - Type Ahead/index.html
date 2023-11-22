@@ -16,7 +16,76 @@
     </ul>
   </form>
 <script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+  // API link:
+  const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+  const cities = [];
+  // global variable for search box
+  const searchInput = document.querySelector(".search");
+  // global variable for match suggestions list
+  const suggestions = document.querySelector(".suggestions");
+
+  // function to fetch cities
+  const getCities = async function() {
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    // console.log(data);
+    cities.push(...data); // add json data to cities array using spread (...) to separate the array items
+  };
+  getCities();
+  // console.log(cities);
+
+  // function to match search for city or state name
+  function findMatches(wordToMatch, cities){
+    return cities.filter(function(place){
+      // RegExp() to figure out if the city or state matches the search text
+      const regex = new RegExp(wordToMatch, 'gi'); // regular expression, g=global match, i=case insensitive
+      return place.city.match(regex) || place.state.match(regex); // '||' = "or"
+    });
+  };
+
+  // function to display matches
+  // ---------------------------------- Functional version, no special formatting ----------------------------------
+      //   function displayMatches() {
+      //   const matchArray = findMatches(this.value, cities); //creates array from search matches
+      //   // console.log(matchArray);
+      //   const suggestion = matchArray.map(function(place){ //maps matchArray into individual objects
+      //     return `<li>
+      //               <span class="name">${place.city}, ${place.state}</span>
+      //               <span class="population">${place.population}</span>
+      //             </li>`; //returns each match suggestion as new list item...result is an array
+      //   }).join(''); //converts arrays into strings
+      //   // console.log(suggestion);
+      //   suggestions.innerHTML = suggestion; //adds match suggestion to suggestions list 
+      // };
+  // ---------------------------------------------------------------------------------------------------------------
+
+  // ----------------------------------------------- Formatted version -----------------------------------------------
+  function displayMatches() {
+    const matchArray = findMatches(this.value, cities); //creates array from search matches
+    // console.log(matchArray);
+    const suggestion = matchArray.map(function(place, cities){ //maps matchArray into individual objects
+
+      // -------- FORMATTING ---------------------
+      const regex = new RegExp(this.value, 'gi'); //regular expression to isolate the search string
+      const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`); //replaces search string in city name with highlighted span
+      const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`); //replaces search string in state name with highlighted span
+
+      return `<li>
+                <span class="name">${cityName}, ${stateName}</span>
+                <span class="population">${numberWithCommas(place.population)}</span>
+              </li>`; //returns each match suggestion as new list item...result is an array
+    }, searchInput).join(''); //searchInput defines "this" used in RegExp, .join() converts arrays into strings
+    // console.log(suggestion);
+    suggestions.innerHTML = suggestion; //adds match suggestion to suggestions list 
+  };
+
+  // function to add commas to population numbers
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  // event listener for search box...runs displayMatches() and passes search box input
+  searchInput.addEventListener('input', displayMatches);
 
 </script>
 </body>
