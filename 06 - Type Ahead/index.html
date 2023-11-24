@@ -65,7 +65,7 @@
     // console.log(matchArray);
     const suggestion = matchArray.map(function(place, cities){ //maps matchArray into individual objects
 
-      // -------- FORMATTING ---------------------
+      // -------- HIGHLIGHT SEARCH TEXT FORMATTING ---------------------
       const regex = new RegExp(this.value, 'gi'); //regular expression to isolate the search string
       const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`); //replaces search string in city name with highlighted span
       const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`); //replaces search string in state name with highlighted span
