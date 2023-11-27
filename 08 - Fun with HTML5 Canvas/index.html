@@ -1,20 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>HTML5 Canvas</title>
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
-<body>
-<canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+<body>
+
+  <canvas id="draw" width="800" height="800"></canvas>
+
+  <script>
+    const canvas = document.querySelector('#draw');
+    const ctx = canvas.getContext('2d');
+
+    // make canvas height & width the same as the window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // set default drawing style
+    ctx.strokeStyle = '#BADA55'; //line color
+    ctx.lineJoin = 'round'; //shape at point line segments join
+    ctx.lineCap = 'round'; //shape of line end
+    ctx.lineWidth = 100; //line size
+    // ctx.globalCompositeOperation = 'multiply'; //functions similar to image mask settings in Photoshop
+
+    // set dummy variables
+    let isDrawing = false; //flags state when drawing is enabled (true)
+    let lastX = 0;
+    let lastY = 0;
+    let hue = 0; //this variable allows the color to change
+    let stroke = 1;
+    let direction = true; //this variable allows the line width to change
+
+    function draw(e) {
+      if (!isDrawing) return; //stops function if user is not moused down
+      console.log(e);
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`; //changes line color
+      ctx.beginPath(); //starts line path
+      ctx.moveTo(lastX, lastY); //start from point
+      ctx.lineTo(e.offsetX, e.offsetY); //go to pont
+      ctx.stroke();
+      //update starting points
+      lastX = e.offsetX;
+      lastY = e.offsetY;
+
+      hue++; //updates to new hsl hue incrementally
+      if (hue >= 360) { //resets hue once it reaches 360 (max hsl)
+        hue = 0;
+      }
+
+      // changes direction value
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+        direction = !direction;
+      }
+      // changes line width based on direction value
+      if (direction) {
+        ctx.lineWidth++;
+      } else {
+        ctx.lineWidth--;
+      }
+
+    };
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      //update starting points to mouse position
+      lastX = e.offsetX;
+      lastY = e.offsetY;
+    });
+
+
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseout', () => isDrawing = false);
+
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
 
 </body>
+
 </html>
